@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#24343a" />
+    <meta name="description" content="A simple weekly personal paper logbook." />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" href="icon.svg" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>DayNotes</title>
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="app-header">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">✦</span>
+          <div>
+            <h1>DayNotes</h1>
+            <p>Your notes stay on this device</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button class="text-button" id="today-button" type="button">Today</button>
+          <details class="backup-menu">
+            <summary aria-label="Open backup options">Backup</summary>
+            <div class="backup-panel">
+              <p>Back up your notes to move them between devices.</p>
+              <button id="export-button" type="button">Export JSON</button>
+              <label class="import-button" for="import-input">Import / Restore JSON</label>
+              <input id="import-input" type="file" accept="application/json,.json" />
+            </div>
+          </details>
+        </div>
+      </header>
+
+      <section class="week-toolbar" aria-label="Week navigation">
+        <button id="previous-button" class="nav-button" type="button"><span aria-hidden="true">←</span> Previous Week</button>
+        <div class="week-title-wrap">
+          <p class="week-kicker">Weekly logbook</p>
+          <h2 id="week-title" aria-live="polite"></h2>
+        </div>
+        <button id="next-button" class="nav-button" type="button">Next Week <span aria-hidden="true">→</span></button>
+      </section>
+
+      <section id="week-page" class="week-page" aria-label="Week notes"></section>
+      <p id="save-status" class="save-status" aria-live="polite">Tap a day to write.</p>
+    </main>
+
+    <template id="day-template">
+      <article class="day-section">
+        <header class="day-heading">
+          <time class="day-label"></time>
+          <span class="today-tag" hidden>Today</span>
+        </header>
+        <div class="note-area" tabindex="0" role="button" aria-label="Edit note">
+          <p class="note-text"></p>
+          <textarea class="note-input" rows="4" aria-label="Daily note" placeholder="Tap here to write…"></textarea>
+        </div>
+      </article>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>
