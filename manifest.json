@@ -1,11 +1,11 @@
 {
   "name": "DayNotes",
   "short_name": "DayNotes",
-  "description": "A simple weekly personal paper logbook.",
+  "description": "En enkel veckovis pappersloggbok för personliga anteckningar.",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#1d2b2d",
-  "theme_color": "#243b3d",
+  "background_color": "#f8f5ee",
+  "theme_color": "#f8f5ee",
   "icons": [
     { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
   ]

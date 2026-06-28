@@ -1,12 +1,15 @@
 <!doctype html>
-<html lang="en">
+<html lang="sv">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#24343a" />
-    <meta name="description" content="A simple weekly personal paper logbook." />
+    <meta name="theme-color" content="#f8f5ee" />
+    <meta name="description" content="En enkel veckovis pappersloggbok för personliga anteckningar." />
     <link rel="manifest" href="manifest.json" />
     <link rel="apple-touch-icon" href="icon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Handlee&family=Kalam:wght@300;400;700&family=Patrick+Hand&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
     <title>DayNotes</title>
   </head>
@@ -14,51 +17,71 @@
     <main class="app-shell">
       <header class="app-header">
         <div class="brand">
-          <span class="brand-mark" aria-hidden="true">✦</span>
+          <span class="brand-mark" aria-hidden="true">*</span>
           <div>
             <h1>DayNotes</h1>
-            <p>Your notes stay on this device</p>
+            <p>Dina anteckningar sparas på den här enheten</p>
           </div>
         </div>
         <div class="header-actions">
-          <button class="text-button" id="today-button" type="button">Today</button>
+          <button class="text-button" id="today-button" type="button">Idag</button>
+          <button class="text-button" id="settings-button" type="button">Inställningar</button>
           <details class="backup-menu">
-            <summary aria-label="Open backup options">Backup</summary>
+            <summary aria-label="Öppna alternativ för säkerhetskopia">Säkerhetskopia</summary>
             <div class="backup-panel">
-              <p>Back up your notes to move them between devices.</p>
-              <button id="export-button" type="button">Export JSON</button>
-              <label class="import-button" for="import-input">Import / Restore JSON</label>
+              <p>Säkerhetskopiera dina anteckningar för att flytta dem mellan enheter.</p>
+              <button id="export-button" type="button">Exportera JSON</button>
+              <label class="import-button" for="import-input">Importera / återställ JSON</label>
               <input id="import-input" type="file" accept="application/json,.json" />
             </div>
           </details>
         </div>
       </header>
 
-      <section class="week-toolbar" aria-label="Week navigation">
-        <button id="previous-button" class="nav-button" type="button"><span aria-hidden="true">←</span> Previous Week</button>
+      <section class="week-toolbar" aria-label="Veckonavigering">
+        <button id="previous-button" class="nav-button" type="button"><span aria-hidden="true">&larr;</span> Föregående vecka</button>
         <div class="week-title-wrap">
-          <p class="week-kicker">Weekly logbook</p>
           <h2 id="week-title" aria-live="polite"></h2>
         </div>
-        <button id="next-button" class="nav-button" type="button">Next Week <span aria-hidden="true">→</span></button>
+        <button id="next-button" class="nav-button" type="button">Nästa vecka <span aria-hidden="true">&rarr;</span></button>
       </section>
 
-      <section id="week-page" class="week-page" aria-label="Week notes"></section>
-      <p id="save-status" class="save-status" aria-live="polite">Tap a day to write.</p>
+      <section id="week-page" class="week-page" aria-label="Veckans anteckningar"></section>
+      <p id="save-status" class="save-status" aria-live="polite">Tryck på en dag för att skriva.</p>
     </main>
 
     <template id="day-template">
       <article class="day-section">
         <header class="day-heading">
           <time class="day-label"></time>
-          <span class="today-tag" hidden>Today</span>
+          <span class="today-tag" hidden>Idag</span>
         </header>
-        <div class="note-area" tabindex="0" role="button" aria-label="Edit note">
+        <div class="note-area" tabindex="0" role="button" aria-label="Redigera anteckning">
           <p class="note-text"></p>
-          <textarea class="note-input" rows="4" aria-label="Daily note" placeholder="Tap here to write…"></textarea>
+          <textarea class="note-input" rows="1" aria-label="Dagens anteckning" placeholder="Tryck här för att skriva..."></textarea>
         </div>
       </article>
     </template>
+
+    <dialog class="settings-dialog" id="settings-dialog" aria-labelledby="settings-title">
+      <form method="dialog" class="settings-card">
+        <header class="settings-header">
+          <h3 id="settings-title">Inställningar</h3>
+          <button class="icon-button" value="close" aria-label="Stäng inställningar" type="submit">&times;</button>
+        </header>
+        <label class="settings-field" for="font-select">
+          <span>Teckensnitt för anteckningar</span>
+          <select id="font-select">
+            <option value="Patrick Hand">Patrick Hand</option>
+            <option value="Caveat">Caveat</option>
+            <option value="Kalam">Kalam</option>
+            <option value="Handlee">Handlee</option>
+            <option value="Segoe Print">Segoe Print</option>
+            <option value="Comic Sans MS">Comic Sans MS</option>
+          </select>
+        </label>
+      </form>
+    </dialog>
 
     <script src="app.js"></script>
   </body>
