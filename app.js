@@ -19,11 +19,25 @@
   const settingsButton = document.querySelector('#settings-button');
   const settingsDialog = document.querySelector('#settings-dialog');
   const fontSelect = document.querySelector('#font-select');
+  const backupMenu = document.querySelector('.backup-menu');
+  const restoreButton = document.querySelector('#restore-button');
+  const importInput = document.querySelector('#import-input');
   let currentMonday = mondayFor(new Date());
 
   function isoDate(date) {
     const local = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     return `${local.getFullYear()}-${String(local.getMonth() + 1).padStart(2, '0')}-${String(local.getDate()).padStart(2, '0')}`;
+  }
+
+  function exportFilename(date) {
+    const parts = [
+      date.getFullYear(),
+      String(date.getMonth() + 1).padStart(2, '0'),
+      String(date.getDate()).padStart(2, '0'),
+      String(date.getHours()).padStart(2, '0'),
+      String(date.getMinutes()).padStart(2, '0'),
+    ];
+    return `DayNotes-${parts.join('-')}.json`;
   }
 
   function mondayFor(date) {
@@ -134,8 +148,32 @@
     saveStatus.textContent = message;
   }
 
-  function noteCountText(count) {
-    return count === 1 ? '1 anteckning' : `${count} anteckningar`;
+  function normalizeBackupEntries(data) {
+    const entries = data && typeof data === 'object' && !Array.isArray(data) && Object.hasOwn(data, 'entries')
+      ? data.entries
+      : data;
+
+    if (!entries || typeof entries !== 'object' || Array.isArray(entries)) {
+      throw new Error('Invalid backup');
+    }
+
+    const cleanEntries = {};
+    Object.entries(entries).forEach(([key, entry]) => {
+      const hasValidDate = /^\d{4}-\d{2}-\d{2}$/.test(key);
+      const hasValidEntry = entry
+        && typeof entry === 'object'
+        && !Array.isArray(entry)
+        && typeof entry.text === 'string'
+        && (entry.updatedAt === undefined || entry.updatedAt === null || typeof entry.updatedAt === 'string');
+
+      if (!hasValidDate || !hasValidEntry) {
+        throw new Error('Invalid backup');
+      }
+
+      cleanEntries[key] = { text: entry.text, updatedAt: entry.updatedAt || null };
+    });
+
+    return cleanEntries;
   }
 
   function render() {
@@ -237,31 +275,29 @@
     const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `daynotes-säkerhetskopia-${isoDate(new Date())}.json`;
+    link.download = exportFilename(new Date());
     link.click();
     URL.revokeObjectURL(link.href);
     setStatus('Säkerhetskopian har laddats ner. Spara den på en trygg plats.');
   });
 
-  document.querySelector('#import-input').addEventListener('change', async (event) => {
+  restoreButton.addEventListener('click', () => {
+    importInput.value = '';
+    importInput.click();
+  });
+
+  importInput.addEventListener('change', async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
     try {
       const data = JSON.parse(await file.text());
-      const entries = data.entries || data;
-      if (!entries || typeof entries !== 'object' || Array.isArray(entries)) throw new Error('Ogiltig säkerhetskopia');
-      const cleanEntries = {};
-      Object.entries(entries).forEach(([key, entry]) => {
-        if (/^\d{4}-\d{2}-\d{2}$/.test(key) && entry && typeof entry.text === 'string') {
-          cleanEntries[key] = { text: entry.text, updatedAt: entry.updatedAt || null };
-        }
-      });
-      if (!window.confirm(`Återställ ${noteCountText(Object.keys(cleanEntries).length)}? Det ersätter anteckningarna som finns på den här enheten.`)) return;
+      const cleanEntries = normalizeBackupEntries(data);
       writeEntries(cleanEntries);
       render();
-      setStatus('Säkerhetskopian har återställts på den här enheten.');
+      setStatus('Säkerhetskopian har återställts.');
+      backupMenu.open = false;
     } catch {
-      setStatus('Filen är inte en giltig DayNotes-säkerhetskopia.');
+      setStatus('Filen kunde inte återställas. Välj en giltig DayNotes-säkerhetskopia i JSON-format.');
     } finally {
       event.target.value = '';
     }

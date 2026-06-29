@@ -138,7 +138,7 @@ h1 {
 
 .import-button { margin-top: .45rem; cursor: pointer; }
 .backup-panel button:hover, .import-button:hover { background: #ebe0cf; }
-#import-input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+#import-input { display: none; }
 
 .week-toolbar {
   justify-content: space-between;
